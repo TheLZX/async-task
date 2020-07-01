@@ -2,6 +2,7 @@ package com.async.task.abstracts;
 
 import com.async.task.api.IAsyncTaskHandler;
 import com.async.task.domain.AsyncTaskExecuteConfig;
+import com.async.task.enums.TaskStatusEnum;
 
 /**
  * @author liucc
@@ -12,7 +13,7 @@ public abstract class AbstractAsyncTaskHandler implements IAsyncTaskHandler {
     /**
      * 任务状态
      */
-    private int taskStatus;
+    private TaskStatusEnum taskStatusInstance = TaskStatusEnum.U;
 
     /**
      * 异步补偿配置
@@ -41,10 +42,16 @@ public abstract class AbstractAsyncTaskHandler implements IAsyncTaskHandler {
     }
 
     /**
-     * 一级任务处理器
+     * 添加到任务执行队列中
      */
     public void addAsyncTask2ThreadPool() {
-        //0.包装一下补偿任务, 添加到线程池
+        //0.任务状态非初始化不执行
+        if (!TaskStatusEnum.checkIfNeedContinueExecute(taskStatusInstance)) {
+            return;
+        }
+        //1.设置任务为处理中
+        this.taskStatusInstance = TaskStatusEnum.P;
+        //1.包装一下补偿任务, 添加到线程池
         EXECUTOR_SERVICE.submit(this::postCompensateProcessor);
     }
 

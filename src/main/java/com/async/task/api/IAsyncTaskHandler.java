@@ -12,8 +12,8 @@ public interface IAsyncTaskHandler {
     /**
      * 公共任务池
      */
-    static final ThreadFactory NAMED_THREAD_FACTORY = new ThreadFactoryBuilder().setNameFormat("pool-sendsms-").build();
-    static final ExecutorService EXECUTOR_SERVICE = new ThreadPoolExecutor(5, 10, 60,
+    ThreadFactory NAMED_THREAD_FACTORY = new ThreadFactoryBuilder().setNameFormat("pool-async-task-").build();
+    ExecutorService EXECUTOR_SERVICE = new ThreadPoolExecutor(5, 10, 60,
             TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(120), NAMED_THREAD_FACTORY);
 
     /**
