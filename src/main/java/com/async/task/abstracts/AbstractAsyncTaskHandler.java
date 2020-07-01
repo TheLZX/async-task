@@ -2,15 +2,17 @@ package com.async.task.abstracts;
 
 import com.async.task.api.IAsyncTaskHandler;
 import com.async.task.domain.AsyncTaskExecuteConfig;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-
-import java.util.concurrent.*;
 
 /**
  * @author liucc
  * 异步任务核心处理类
  */
 public abstract class AbstractAsyncTaskHandler implements IAsyncTaskHandler {
+
+    /**
+     * 任务状态
+     */
+    private int taskStatus;
 
     /**
      * 异步补偿配置
@@ -25,7 +27,7 @@ public abstract class AbstractAsyncTaskHandler implements IAsyncTaskHandler {
     /**
      * 后置异步任务补偿处理器
      */
-    protected abstract void postCompensateAsyncTaskProcessor();
+    protected abstract void postCompensateProcessor();
 
     /**
      * 异步任务执行器
@@ -43,7 +45,7 @@ public abstract class AbstractAsyncTaskHandler implements IAsyncTaskHandler {
      */
     public void addAsyncTask2ThreadPool() {
         //0.包装一下补偿任务, 添加到线程池
-        EXECUTOR_SERVICE.submit(this::postCompensateAsyncTaskProcessor);
+        EXECUTOR_SERVICE.submit(this::postCompensateProcessor);
     }
 
 }
