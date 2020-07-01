@@ -13,7 +13,7 @@ public class DemoAsyncTaskHandler extends AbstractAsyncTaskHandler {
     }
 
     @Override
-    protected void postAsyncTaskProcessor() {
+    protected void postCompensateAsyncTaskProcessor() {
         System.out.println("订单支付成功!");
     }
 }

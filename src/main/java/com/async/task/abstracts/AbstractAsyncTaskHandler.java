@@ -1,5 +1,6 @@
 package com.async.task.abstracts;
 
+import com.async.task.api.IAsyncTaskHandler;
 import com.async.task.domain.AsyncTaskExecuteConfig;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
@@ -9,7 +10,7 @@ import java.util.concurrent.*;
  * @author liucc
  * 异步任务核心处理类
  */
-public abstract class AbstractAsyncTaskHandler {
+public abstract class AbstractAsyncTaskHandler implements IAsyncTaskHandler {
 
     /**
      * 异步补偿配置
@@ -17,25 +18,19 @@ public abstract class AbstractAsyncTaskHandler {
     private AsyncTaskExecuteConfig asyncTaskExecuteConfig;
 
     /**
-     * 公共任务池
-     */
-    private static final ThreadFactory NAMED_THREAD_FACTORY = new ThreadFactoryBuilder().setNameFormat("pool-sendsms-").build();
-    private static final ExecutorService EXECUTOR_SERVICE = new ThreadPoolExecutor(5, 10, 60,
-                    TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(120), NAMED_THREAD_FACTORY);
-
-    /**
      * 正向处理器
      */
     protected abstract void processor();
 
     /**
-     * 异步补偿器
+     * 后置异步任务补偿处理器
      */
-    protected abstract void postAsyncTaskProcessor();
+    protected abstract void postCompensateAsyncTaskProcessor();
 
     /**
      * 异步任务执行器
      */
+    @Override
     public void asyncTaskExecutor() {
         //0.执行正向业务流程
         this.processor();
@@ -48,7 +43,7 @@ public abstract class AbstractAsyncTaskHandler {
      */
     public void addAsyncTask2ThreadPool() {
         //0.包装一下补偿任务, 添加到线程池
-        EXECUTOR_SERVICE.submit(this::postAsyncTaskProcessor);
+        EXECUTOR_SERVICE.submit(this::postCompensateAsyncTaskProcessor);
     }
 
 }
